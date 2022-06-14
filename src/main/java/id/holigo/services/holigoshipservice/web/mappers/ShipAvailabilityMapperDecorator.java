@@ -3,10 +3,12 @@ package id.holigo.services.holigoshipservice.web.mappers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.holigo.services.holigoshipservice.domain.ShipAvailability;
+import id.holigo.services.holigoshipservice.domain.ShipFinalFareTrip;
 import id.holigo.services.holigoshipservice.web.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -58,9 +60,7 @@ public abstract class ShipAvailabilityMapperDecorator implements ShipAvailabilit
         for (int i = 0; i < retrossResponseScheduleDto.getSchedule().getDepartures().size(); i++) {
             log.info("For loop -> {}", i);
             RetrossDepartureDto retrossDepartureDto = retrossResponseScheduleDto.getSchedule().getDepartures().get(i);
-            retrossDepartureDto.getFares().forEach(fare -> {
-                shipAvailabilityDtoList.add(retrossDepartureDtoToTrainAvailabilityDto(retrossDepartureDto, fare, userId));
-            });
+            retrossDepartureDto.getFares().forEach(fare -> shipAvailabilityDtoList.add(retrossDepartureDtoToTrainAvailabilityDto(retrossDepartureDto, fare, userId)));
         }
 
         ListAvailabilityDto listAvailabilityDto = new ListAvailabilityDto();
@@ -77,5 +77,25 @@ public abstract class ShipAvailabilityMapperDecorator implements ShipAvailabilit
             throw new RuntimeException(e);
         }
         return shipAvailability;
+    }
+
+    @Override
+    public ShipFinalFareTrip shipAvailabilityToShipFinalFareTrip(ShipAvailability shipAvailability) {
+        ShipFinalFareTrip shipFinalFareTrip = shipAvailabilityMapper.shipAvailabilityToShipFinalFareTrip(shipAvailability);
+        shipFinalFareTrip.setFareAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setAdminAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setNtaAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setNraAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setCpAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setIpAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setMpAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setHpAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setHvAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setPrAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setIpcAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setHpcAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setPrcAmount(BigDecimal.valueOf(0.00));
+        shipFinalFareTrip.setLossAmount(BigDecimal.valueOf(0.00));
+        return shipFinalFareTrip;
     }
 }
